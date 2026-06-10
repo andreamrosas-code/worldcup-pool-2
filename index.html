@@ -294,7 +294,7 @@ function getPickOutcome(groupName,matchIdx,pick){
 function calcScore(picks){
   var score=0;
   for(var key in picks){
-    var parts=key.split('-');var groupName=parts.slice(0,2).join(' ');var matchIdx=parseInt(parts[2]);var pick=picks[key];
+    var parts=key.split('-');var matchIdx=parseInt(parts[parts.length-1]);var groupName=parts.slice(0,-1).join('-');var pick=picks[key];
     if(getPickOutcome(groupName,matchIdx,pick)==='correct'){
       var g=null;for(var i=0;i<GROUPS.length;i++){if(GROUPS[i].name===groupName){g=GROUPS[i];break;}}
       if(g){var matches=getMatches(g.teams);var m=matches[matchIdx];
@@ -310,7 +310,7 @@ function calcScore(picks){
 function calcMaxPossible(picks){
   var max=0;
   for(var key in picks){
-    var parts=key.split('-');var groupName=parts.slice(0,2).join(' ');var matchIdx=parseInt(parts[2]);var pick=picks[key];
+    var parts=key.split('-');var matchIdx=parseInt(parts[parts.length-1]);var groupName=parts.slice(0,-1).join('-');var pick=picks[key];
     var g=null;for(var i=0;i<GROUPS.length;i++){if(GROUPS[i].name===groupName){g=GROUPS[i];break;}}
     if(!g)continue;var matches=getMatches(g.teams);var m=matches[matchIdx];if(!m)continue;
     if(pick==='draw')max+=PTS_DRAW;
@@ -323,7 +323,7 @@ function calcMaxPossible(picks){
 function calcBestPossible(picks){
   var earned=calcScore(picks);var stillToPlay=0;
   for(var key in picks){
-    var parts=key.split('-');var groupName=parts.slice(0,2).join(' ');var matchIdx=parseInt(parts[2]);var pick=picks[key];
+    var parts=key.split('-');var matchIdx=parseInt(parts[parts.length-1]);var groupName=parts.slice(0,-1).join('-');var pick=picks[key];
     if(getPickOutcome(groupName,matchIdx,pick)==='pending'){
       var g=null;for(var i=0;i<GROUPS.length;i++){if(GROUPS[i].name===groupName){g=GROUPS[i];break;}}
       if(!g)continue;var matches=getMatches(g.teams);var m=matches[matchIdx];if(!m)continue;
