@@ -138,6 +138,7 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
     </div>
     <div id="deadline-bar" class="deadline-bar"></div>
     <div id="post-deadline-lb" style="display:none;max-width:420px;margin:0 auto 1.25rem;text-align:center;"><button class="btn-primary" onclick="showLeaderboard()">View leaderboard</button></div>
+
     <div id="join-card-wrap" class="card">
       <label for="inp-name">Your name</label>
       <input type="text" id="inp-name" placeholder="e.g. Jamie" maxlength="30" autocomplete="off">
@@ -353,7 +354,8 @@ function renderDeadlineBar(){
   if(isPastDeadline()){
     el.textContent='Deadline passed. Brackets are locked.';
     el.className='deadline-bar locked';
-    var jc=document.getElementById('join-card-wrap');if(jc)jc.style.display='none';
+  
+var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block';
   } else {
     var diff=DEADLINE-new Date();
     var days=Math.floor(diff/86400000);var hrs=Math.floor((diff%86400000)/3600000);
