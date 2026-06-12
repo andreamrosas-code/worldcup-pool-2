@@ -137,7 +137,8 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
       <p>Pick results for all 48 matches. Upsets pay more.</p>
     </div>
     <div id="deadline-bar" class="deadline-bar"></div>
-   <div id="post-deadline-lb" style="display:none;max-width:420px;margin:0 auto 1.25rem;text-align:center;"><button class="btn-primary" onclick="showLeaderboard()">View leaderboard</button></div><div id="join-card-wrap" class="card">
+    <div id="post-deadline-lb" style="display:none;max-width:420px;margin:0 auto 1.25rem;text-align:center;"><button class="btn-primary" onclick="showLeaderboard()">View leaderboard</button></div>
+    <div id="join-card-wrap" class="card">
       <label for="inp-name">Your name</label>
       <input type="text" id="inp-name" placeholder="e.g. Jamie" maxlength="30" autocomplete="off">
       <label for="inp-pw">Password</label>
@@ -261,28 +262,29 @@ function avatarColor(name){var h=0;for(var i=0;i<name.length;i++){h=((h<<5)-h)+n
 function normaliseTeam(name){if(!name)return '';return TEAM_ALIASES[name]||name;}
 function getResultOutcome(home,away,hs,as){if(hs>as)return normaliseTeam(home);if(as>hs)return normaliseTeam(away);return 'draw';}
 
-async function fetchResults(){console.log('fetchResults called');
+async function fetchResults(){
   try{
-    var resp=await fetch('https://v3.football.api-sports.io/fixtures?league=1&season=2026',{
-      headers:{'x-apisports-key':FOOTBALL_API_KEY}
-    });
+    var resp=await fetch('https://worldcup26.ir/get/games');
     if(!resp.ok)return;
     var data=await resp.json();
     var nr={};
-    if(data.response){
-      data.response.forEach(function(m){
-        if(m.fixture.status.short==='FT'){
-          var home=normaliseTeam(m.teams.home.name||'');
-          var away=normaliseTeam(m.teams.away.name||'');
-          var hs=m.goals.home,as=m.goals.away;
-          if(home&&away&&hs!==null&&as!==null){
-            nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
-            nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
-          }
+    var games=Array.isArray(data)?data:(data.games||data.data||[]);
+    games.forEach(function(m){
+      var status=m.status||m.match_status||'';
+      var finished=status==='finished'||status==='FT'||status==='completed'||m.finished===true;
+      if(finished){
+        var home=normaliseTeam(m.home_team||m.homeTeam||m.home||'');
+        var away=normaliseTeam(m.away_team||m.awayTeam||m.away||'');
+        var hs=parseInt(m.home_score||m.homeScore||m.score_home||0);
+        var as=parseInt(m.away_score||m.awayScore||m.score_away||0);
+        if(home&&away){
+          nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
+          nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
         }
-      });
-    }
-    console.log('Fetched results:',Object.keys(nr).length,'matches',nr);matchResults=nr;lastRefresh=new Date();
+      }
+    });
+    matchResults=nr;lastRefresh=new Date();
+    console.log('Results loaded:',Object.keys(nr).length,'finished matches');
   }catch(e){console.log('Results fetch error:',e);}
 }
 
