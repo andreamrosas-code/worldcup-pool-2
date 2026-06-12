@@ -282,7 +282,7 @@ async function fetchResults(){
         }
       });
     }
-    matchResults=nr;lastRefresh=new Date();
+    console.log('Fetched results:',Object.keys(nr).length,'matches',nr);matchResults=nr;lastRefresh=new Date();
   }catch(e){console.log('Results fetch error:',e);}
 }
 
