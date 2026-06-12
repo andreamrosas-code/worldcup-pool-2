@@ -137,9 +137,6 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
       <p>Pick results for all 48 matches. Upsets pay more.</p>
     </div>
     <div id="deadline-bar" class="deadline-bar"></div>
-    <div id="post-deadline-lb" style="display:none;max-width:420px;margin:0 auto 1.25rem;text-align:center;">
-  <button class="btn-primary" onclick="showLeaderboard()">View leaderboard</button>
-</div>
     <div id="join-card-wrap" class="card">
       <label for="inp-name">Your name</label>
       <input type="text" id="inp-name" placeholder="e.g. Jamie" maxlength="30" autocomplete="off">
@@ -213,9 +210,9 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
 <script>
 var SUPABASE_URL = 'https://qzizyvitovqfzdgymyer.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_KWethOp3hCjgKt3_8XQ46w_-BZ8QGYR';
-var FOOTBALL_API_KEY = '097f2332f9fe4830b81bc6fe555a19db';
+var FOOTBALL_API_KEY = '7fa8b01dd8106386d07918b277d84d24';
 var BUYIN = 10;
-var DEADLINE = new Date('2026-06-11T15:30:00-05:00');
+var DEADLINE = new Date('2026-06-11T14:00:00-05:00');
 var ADMIN_PASSWORD = 'deadlinepw';
 var REFRESH_MS = 60000;
 
@@ -237,14 +234,17 @@ var GROUPS = [
 ];
 
 var TEAM_ALIASES = {
-  'Korea Republic':'South Korea','Republic of Korea':'South Korea',
-  'Bosnia-Herzegovina':'Bosnia and Herzegovina','Bosnia & Herzegovina':'Bosnia and Herzegovina',
+  'Korea Republic':'South Korea','Republic of Korea':'South Korea','South Korea':'South Korea',
+  'Bosnia-Herzegovina':'Bosnia and Herzegovina','Bosnia & Herzegovina':'Bosnia and Herzegovina','Bosnia and Herzegovina':'Bosnia and Herzegovina',
   'Türkiye':'Turkiye','Turkey':'Turkiye',
-  'United States':'USA',
-  'DR Congo':'DR Congo','Congo DR':'DR Congo','Democratic Republic of Congo':'DR Congo',
-  'Cote d\'Ivoire':'Ivory Coast','Côte d\'Ivoire':'Ivory Coast',
-  'Cape Verde Islands':'Cape Verde',
-  'Curaçao':'Curacao'
+  'United States':'USA','USA':'USA',
+  'DR Congo':'DR Congo','Congo DR':'DR Congo','Democratic Republic of Congo':'DR Congo','Congo':'DR Congo',
+  'Cote d\'Ivoire':'Ivory Coast','Côte d\'Ivoire':'Ivory Coast','Ivory Coast':'Ivory Coast',
+  'Cape Verde Islands':'Cape Verde','Cape Verde':'Cape Verde',
+  'Curaçao':'Curacao','Curacao':'Curacao',
+  'New Zealand':'New Zealand','Saudi Arabia':'Saudi Arabia',
+  'Scotland':'Scotland','Ireland':'Ireland',
+  'Bosnia':'Bosnia and Herzegovina'
 };
 
 var PTS_FAV=1,PTS_DRAW=3,PTS_UPSET=5;
@@ -263,16 +263,18 @@ function getResultOutcome(home,away,hs,as){if(hs>as)return normaliseTeam(home);i
 
 async function fetchResults(){
   try{
-    var resp=await fetch('https://api.football-data.org/v4/competitions/WC/matches?season=2026&stage=GROUP_STAGE',{headers:{'X-Auth-Token':FOOTBALL_API_KEY}});
+    var resp=await fetch('https://v3.football.api-sports.io/fixtures?league=1&season=2026&round=Group+Stage',{
+      headers:{'x-apisports-key':FOOTBALL_API_KEY}
+    });
     if(!resp.ok)return;
     var data=await resp.json();
     var nr={};
-    if(data.matches){
-      data.matches.forEach(function(m){
-        if(m.status==='FINISHED'&&m.score&&m.score.fullTime){
-          var home=normaliseTeam(m.homeTeam.name||m.homeTeam.shortName||'');
-          var away=normaliseTeam(m.awayTeam.name||m.awayTeam.shortName||'');
-          var hs=m.score.fullTime.home,as=m.score.fullTime.away;
+    if(data.response){
+      data.response.forEach(function(m){
+        if(m.fixture.status.short==='FT'){
+          var home=normaliseTeam(m.teams.home.name||'');
+          var away=normaliseTeam(m.teams.away.name||'');
+          var hs=m.goals.home,as=m.goals.away;
           if(home&&away&&hs!==null&&as!==null){
             nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
             nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
@@ -350,11 +352,11 @@ function renderDeadlineBar(){
   if(isPastDeadline()){
     el.textContent='Deadline passed. Brackets are locked.';
     el.className='deadline-bar locked';
-    var jc=document.getElementById('join-card-wrap');if(jc)jc.style.display='none'; var lb=document.getElementById('post-deadline-lb');if(lb)lb.style.display='block';
+    var jc=document.getElementById('join-card-wrap');if(jc)jc.style.display='none';
   } else {
     var diff=DEADLINE-new Date();
     var days=Math.floor(diff/86400000);var hrs=Math.floor((diff%86400000)/3600000);
-    el.textContent='Deadline: June 11, 2026 at 3:30 PM EST — '+days+' days '+hrs+' hrs remaining';
+    el.textContent='Deadline: June 11, 2026 at 2:00 PM EST — '+days+' days '+hrs+' hrs remaining';
   }
 }
 
