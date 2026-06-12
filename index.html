@@ -245,7 +245,7 @@ var TEAM_ALIASES = {
   'Curaçao':'Curacao','Curacao':'Curacao',
   'New Zealand':'New Zealand','Saudi Arabia':'Saudi Arabia',
   'Scotland':'Scotland','Ireland':'Ireland',
-  'Bosnia':'Bosnia and Herzegovina'
+  'Czech Republic':'Czechia','Czechia':'Czechia',
 };
 
 var PTS_FAV=1,PTS_DRAW=3,PTS_UPSET=5;
@@ -270,13 +270,12 @@ async function fetchResults(){
     var nr={};
     var games=Array.isArray(data)?data:(data.games||data.data||[]);
     games.forEach(function(m){
-      var status=m.status||m.match_status||'';
-      var finished=status==='finished'||status==='FT'||status==='completed'||m.finished===true;
+      var finished=m.finished==='TRUE'||m.finished===true||m.time_elapsed==='finished';
       if(finished){
-        var home=normaliseTeam(m.home_team||m.homeTeam||m.home||'');
-        var away=normaliseTeam(m.away_team||m.awayTeam||m.away||'');
-        var hs=parseInt(m.home_score||m.homeScore||m.score_home||0);
-        var as=parseInt(m.away_score||m.awayScore||m.score_away||0);
+        var home=normaliseTeam(m.home_team_name_en||m.home_team||'');
+        var away=normaliseTeam(m.away_team_name_en||m.away_team||'');
+        var hs=parseInt(m.home_score||0);
+        var as=parseInt(m.away_score||0);
         if(home&&away){
           nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
           nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
