@@ -261,7 +261,7 @@ function avatarColor(name){var h=0;for(var i=0;i<name.length;i++){h=((h<<5)-h)+n
 function normaliseTeam(name){if(!name)return '';return TEAM_ALIASES[name]||name;}
 function getResultOutcome(home,away,hs,as){if(hs>as)return normaliseTeam(home);if(as>hs)return normaliseTeam(away);return 'draw';}
 
-async function fetchResults(){
+async function fetchResults(){console.log('fetchResults called');
   try{
     var resp=await fetch('https://v3.football.api-sports.io/fixtures?league=1&season=2026',{
       headers:{'x-apisports-key':FOOTBALL_API_KEY}
