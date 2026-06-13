@@ -190,114 +190,116 @@ var AVATARCOLORS=['#7b3fa0','#f06090','#22d4e8','#44e87a','#ff8840','#d4a8f5','#
 // Each match stores [homeTeam, awayTeam, originalKeyIndex]
 // originalKeyIndex = position in the old getMatches() combination order
 // getMatches gives: for teams [A,B,C,D]: AB(0),AC(1),AD(2),BC(3),BD(4),CD(5)
+// getMatches order for [A,B,C,D]: AB=0, AC=1, AD=2, BC=3, BD=4, CD=5
+// Real FIFA 2026 schedule matchday pairings verified from official schedule
 var GROUPS=[
   {name:'Group A',teams:['Mexico','South Africa','South Korea','Czechia'],
    schedule:[
-     {md:1,home:'Mexico',away:'South Africa',ki:0},
-     {md:1,home:'South Korea',away:'Czechia',ki:5},
-     {md:2,home:'Mexico',away:'South Korea',ki:1},
-     {md:2,home:'South Africa',away:'Czechia',ki:4},
-     {md:3,home:'South Africa',away:'South Korea',ki:3},
-     {md:3,home:'Mexico',away:'Czechia',ki:2}
+     {md:1,home:'Mexico',away:'South Africa',ki:0},           // AB Jun 11
+     {md:1,home:'South Korea',away:'Czechia',ki:5},           // CD Jun 11
+     {md:2,home:'Czechia',away:'South Africa',ki:4},          // BD Jun 18 (reversed)
+     {md:2,home:'Mexico',away:'South Korea',ki:1},            // AC Jun 18
+     {md:3,home:'South Africa',away:'South Korea',ki:3},      // BC Jun 25
+     {md:3,home:'Mexico',away:'Czechia',ki:2}                 // AD Jun 25
    ]},
   {name:'Group B',teams:['Canada','Bosnia and Herzegovina','Qatar','Switzerland'],
    schedule:[
-     {md:1,home:'Canada',away:'Bosnia and Herzegovina',ki:0},
-     {md:1,home:'Qatar',away:'Switzerland',ki:5},
-     {md:2,home:'Canada',away:'Qatar',ki:2},
-     {md:2,home:'Bosnia and Herzegovina',away:'Switzerland',ki:4},
-     {md:3,home:'Canada',away:'Switzerland',ki:3},
-     {md:3,home:'Bosnia and Herzegovina',away:'Qatar',ki:1}
+     {md:1,home:'Canada',away:'Bosnia and Herzegovina',ki:0}, // AB Jun 12
+     {md:1,home:'Qatar',away:'Switzerland',ki:5},             // CD Jun 13
+     {md:2,home:'Canada',away:'Qatar',ki:1},                  // AC Jun 17 (fixed: AC not AD)
+     {md:2,home:'Bosnia and Herzegovina',away:'Switzerland',ki:4}, // BD Jun 18
+     {md:3,home:'Bosnia and Herzegovina',away:'Qatar',ki:3},  // BC Jun 24
+     {md:3,home:'Canada',away:'Switzerland',ki:2}             // AD Jun 24
    ]},
   {name:'Group C',teams:['Brazil','Morocco','Haiti','Scotland'],
    schedule:[
-     {md:1,home:'Brazil',away:'Haiti',ki:2},
-     {md:1,home:'Morocco',away:'Scotland',ki:5},
-     {md:2,home:'Brazil',away:'Scotland',ki:3},
-     {md:2,home:'Haiti',away:'Morocco',ki:4},
-     {md:3,home:'Haiti',away:'Scotland',ki:1},
-     {md:3,home:'Brazil',away:'Morocco',ki:0}
+     {md:1,home:'Brazil',away:'Morocco',ki:0},                // AB Jun 13
+     {md:1,home:'Haiti',away:'Scotland',ki:5},                // CD Jun 13
+     {md:2,home:'Brazil',away:'Haiti',ki:1},                  // AC Jun 18 (fixed)
+     {md:2,home:'Morocco',away:'Scotland',ki:4},              // BD Jun 18 (fixed)
+     {md:3,home:'Morocco',away:'Haiti',ki:3},                 // BC Jun 25
+     {md:3,home:'Brazil',away:'Scotland',ki:2}                // AD Jun 25
    ]},
   {name:'Group D',teams:['USA','Paraguay','Australia','Turkiye'],
    schedule:[
-     {md:1,home:'USA',away:'Turkiye',ki:2},
-     {md:1,home:'Paraguay',away:'Australia',ki:4},
-     {md:2,home:'USA',away:'Australia',ki:1},
-     {md:2,home:'Turkiye',away:'Paraguay',ki:3},
-     {md:3,home:'Turkiye',away:'Australia',ki:5},
-     {md:3,home:'USA',away:'Paraguay',ki:0}
+     {md:1,home:'USA',away:'Paraguay',ki:0},                  // AB Jun 12
+     {md:1,home:'Australia',away:'Turkiye',ki:5},             // CD Jun 13
+     {md:2,home:'USA',away:'Australia',ki:1},                 // AC Jun 18
+     {md:2,home:'Paraguay',away:'Turkiye',ki:4},              // BD Jun 18 (fixed)
+     {md:3,home:'Paraguay',away:'Australia',ki:3},            // BC Jun 25
+     {md:3,home:'USA',away:'Turkiye',ki:2}                    // AD Jun 25
    ]},
   {name:'Group E',teams:['Germany','Curacao','Ivory Coast','Ecuador'],
    schedule:[
-     {md:1,home:'Germany',away:'Curacao',ki:0},
-     {md:1,home:'Ivory Coast',away:'Ecuador',ki:5},
-     {md:2,home:'Germany',away:'Ecuador',ki:2},
-     {md:2,home:'Curacao',away:'Ivory Coast',ki:4},
-     {md:3,home:'Curacao',away:'Ecuador',ki:3},
-     {md:3,home:'Germany',away:'Ivory Coast',ki:1}
+     {md:1,home:'Germany',away:'Curacao',ki:0},               // AB Jun 14
+     {md:1,home:'Ivory Coast',away:'Ecuador',ki:5},           // CD Jun 14
+     {md:2,home:'Germany',away:'Ivory Coast',ki:1},           // AC Jun 19 (fixed)
+     {md:2,home:'Curacao',away:'Ecuador',ki:4},               // BD Jun 19 (fixed)
+     {md:3,home:'Curacao',away:'Ivory Coast',ki:3},           // BC Jun 25
+     {md:3,home:'Germany',away:'Ecuador',ki:2}                // AD Jun 25
    ]},
   {name:'Group F',teams:['Netherlands','Japan','Sweden','Tunisia'],
    schedule:[
-     {md:1,home:'Netherlands',away:'Tunisia',ki:2},
-     {md:1,home:'Japan',away:'Sweden',ki:4},
-     {md:2,home:'Netherlands',away:'Sweden',ki:1},
-     {md:2,home:'Tunisia',away:'Japan',ki:5},
-     {md:3,home:'Tunisia',away:'Sweden',ki:3},
-     {md:3,home:'Netherlands',away:'Japan',ki:0}
+     {md:1,home:'Netherlands',away:'Japan',ki:0},             // AB Jun 14
+     {md:1,home:'Sweden',away:'Tunisia',ki:5},                // CD Jun 14
+     {md:2,home:'Netherlands',away:'Sweden',ki:1},            // AC Jun 20
+     {md:2,home:'Tunisia',away:'Japan',ki:4},                 // BD Jun 20 (fixed: reversed)
+     {md:3,home:'Japan',away:'Sweden',ki:3},                  // BC Jun 25
+     {md:3,home:'Tunisia',away:'Netherlands',ki:2}            // AD Jun 25 (reversed)
    ]},
   {name:'Group G',teams:['Belgium','Egypt','Iran','New Zealand'],
    schedule:[
-     {md:1,home:'Belgium',away:'Iran',ki:1},
-     {md:1,home:'Egypt',away:'New Zealand',ki:5},
-     {md:2,home:'Belgium',away:'New Zealand',ki:2},
-     {md:2,home:'Iran',away:'Egypt',ki:4},
-     {md:3,home:'Iran',away:'New Zealand',ki:3},
-     {md:3,home:'Belgium',away:'Egypt',ki:0}
+     {md:1,home:'Belgium',away:'Egypt',ki:0},                 // AB Jun 15
+     {md:1,home:'Iran',away:'New Zealand',ki:5},              // CD Jun 15
+     {md:2,home:'Belgium',away:'Iran',ki:1},                  // AC Jun 21
+     {md:2,home:'Egypt',away:'New Zealand',ki:4},             // BD Jun 21 (fixed)
+     {md:3,home:'Egypt',away:'Iran',ki:3},                    // BC Jun 27
+     {md:3,home:'Belgium',away:'New Zealand',ki:2}            // AD Jun 27
    ]},
   {name:'Group H',teams:['Spain','Cape Verde','Saudi Arabia','Uruguay'],
    schedule:[
-     {md:1,home:'Spain',away:'Uruguay',ki:2},
-     {md:1,home:'Saudi Arabia',away:'Cape Verde',ki:4},
-     {md:2,home:'Spain',away:'Cape Verde',ki:0},
-     {md:2,home:'Uruguay',away:'Saudi Arabia',ki:5},
-     {md:3,home:'Uruguay',away:'Cape Verde',ki:3},
-     {md:3,home:'Spain',away:'Saudi Arabia',ki:1}
+     {md:1,home:'Spain',away:'Cape Verde',ki:0},              // AB Jun 15
+     {md:1,home:'Saudi Arabia',away:'Uruguay',ki:5},          // CD Jun 15
+     {md:2,home:'Spain',away:'Saudi Arabia',ki:1},            // AC Jun 20
+     {md:2,home:'Cape Verde',away:'Uruguay',ki:4},            // BD Jun 20 (fixed)
+     {md:3,home:'Cape Verde',away:'Saudi Arabia',ki:3},       // BC Jun 26
+     {md:3,home:'Spain',away:'Uruguay',ki:2}                  // AD Jun 26
    ]},
   {name:'Group I',teams:['France','Senegal','Norway','Iraq'],
    schedule:[
-     {md:1,home:'France',away:'Iraq',ki:2},
-     {md:1,home:'Senegal',away:'Norway',ki:5},
-     {md:2,home:'France',away:'Norway',ki:1},
-     {md:2,home:'Iraq',away:'Senegal',ki:4},
-     {md:3,home:'Iraq',away:'Norway',ki:3},
-     {md:3,home:'France',away:'Senegal',ki:0}
+     {md:1,home:'France',away:'Senegal',ki:0},                // AB Jun 16
+     {md:1,home:'Norway',away:'Iraq',ki:5},                   // CD Jun 16
+     {md:2,home:'France',away:'Norway',ki:1},                 // AC Jun 21
+     {md:2,home:'Senegal',away:'Iraq',ki:4},                  // BD Jun 21 (fixed)
+     {md:3,home:'Senegal',away:'Norway',ki:3},                // BC Jun 26
+     {md:3,home:'France',away:'Iraq',ki:2}                    // AD Jun 26
    ]},
   {name:'Group J',teams:['Argentina','Algeria','Austria','Jordan'],
    schedule:[
-     {md:1,home:'Argentina',away:'Jordan',ki:2},
-     {md:1,home:'Algeria',away:'Austria',ki:5},
-     {md:2,home:'Argentina',away:'Austria',ki:1},
-     {md:2,home:'Jordan',away:'Algeria',ki:4},
-     {md:3,home:'Jordan',away:'Austria',ki:3},
-     {md:3,home:'Argentina',away:'Algeria',ki:0}
+     {md:1,home:'Argentina',away:'Algeria',ki:0},             // AB Jun 15
+     {md:1,home:'Austria',away:'Jordan',ki:5},                // CD Jun 17
+     {md:2,home:'Argentina',away:'Austria',ki:1},             // AC Jun 22
+     {md:2,home:'Algeria',away:'Jordan',ki:4},                // BD Jun 22 (fixed)
+     {md:3,home:'Algeria',away:'Austria',ki:3},               // BC Jun 27
+     {md:3,home:'Argentina',away:'Jordan',ki:2}               // AD Jun 27
    ]},
   {name:'Group K',teams:['Portugal','DR Congo','Uzbekistan','Colombia'],
    schedule:[
-     {md:1,home:'Portugal',away:'Uzbekistan',ki:1},
-     {md:1,home:'DR Congo',away:'Colombia',ki:5},
-     {md:2,home:'Portugal',away:'Colombia',ki:2},
-     {md:2,home:'Uzbekistan',away:'DR Congo',ki:4},
-     {md:3,home:'Uzbekistan',away:'Colombia',ki:3},
-     {md:3,home:'Portugal',away:'DR Congo',ki:0}
+     {md:1,home:'Portugal',away:'DR Congo',ki:0},             // AB Jun 16
+     {md:1,home:'Uzbekistan',away:'Colombia',ki:5},           // CD Jun 16
+     {md:2,home:'Portugal',away:'Uzbekistan',ki:1},           // AC Jun 22
+     {md:2,home:'DR Congo',away:'Colombia',ki:4},             // BD Jun 22 (fixed)
+     {md:3,home:'DR Congo',away:'Uzbekistan',ki:3},           // BC Jun 27
+     {md:3,home:'Portugal',away:'Colombia',ki:2}              // AD Jun 27
    ]},
   {name:'Group L',teams:['England','Croatia','Ghana','Panama'],
    schedule:[
-     {md:1,home:'England',away:'Panama',ki:2},
-     {md:1,home:'Croatia',away:'Ghana',ki:4},
-     {md:2,home:'England',away:'Ghana',ki:1},
-     {md:2,home:'Panama',away:'Croatia',ki:5},
-     {md:3,home:'Panama',away:'Ghana',ki:3},
-     {md:3,home:'England',away:'Croatia',ki:0}
+     {md:1,home:'England',away:'Croatia',ki:0},               // AB Jun 16
+     {md:1,home:'Ghana',away:'Panama',ki:5},                  // CD Jun 16
+     {md:2,home:'England',away:'Ghana',ki:1},                 // AC Jun 22
+     {md:2,home:'Croatia',away:'Panama',ki:4},                // BD Jun 22 (fixed)
+     {md:3,home:'Croatia',away:'Ghana',ki:3},                 // BC Jun 27
+     {md:3,home:'England',away:'Panama',ki:2}                 // AD Jun 27
    ]}
 ];
 
