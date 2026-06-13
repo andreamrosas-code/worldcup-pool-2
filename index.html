@@ -85,8 +85,10 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
 .team-home{display:flex;align-items:center;gap:6px;}
 .team-away{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
 .team-name-s{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
-.score-s{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--gold);text-align:center;min-width:60px;}
-.score-s.pending{color:var(--text-dim);font-size:14px;}
+.score-col-s{display:flex;align-items:center;justify-content:center;gap:6px;min-width:120px;}
+.score-num-s{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.result-label-s{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:0.02em;text-align:center;}
+.score-pending-s{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--text-dim);}
 .picks-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;border-top:1px solid var(--border);padding-top:0.75rem;}
 .divider-v{background:var(--border);width:1px;margin:0 6px;}
 .picks-col{display:flex;align-items:center;gap:3px;flex-wrap:wrap;padding:0 4px;}
@@ -542,26 +544,24 @@ function renderSchedule(){
     ri.innerHTML='<span class="live-dot"></span>Last updated: '+(lastRefresh?lastRefresh.toLocaleTimeString():'\u2014');
   }
 
-  var html='';
+  // Player points summary row - sorted by score descending - shown once at top
+  var sortedPlayers=allPlayers.slice().map(function(pl2){return {p:pl2,score:calcScore(pl2.picks||{})};}).sort(function(a,b){return b.score-a.score;});
+  var summaryHtml='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:1.5rem;padding:1rem 1.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;">';
+  for(var pi2=0;pi2<sortedPlayers.length;pi2++){
+    var pl2=sortedPlayers[pi2].p;
+    var sc2=sortedPlayers[pi2].score;
+    summaryHtml+='<div style="display:flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 4px;">';
+    summaryHtml+='<div class="sm-avatar" style="background:'+avatarColor(pl2.name)+';">' +initials(pl2.name)+'<div class="tip">'+pl2.name+'</div></div>';
+    summaryHtml+='<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:var(--purple);">'+sc2+'</span>';
+    summaryHtml+='<span style="font-size:10px;color:var(--text-dim);">pts</span>';
+    summaryHtml+='</div>';
+  }
+  summaryHtml+='</div>';
+
+  var html=summaryHtml;
   for(var gi=0;gi<GROUPS.length;gi++){
     var g=GROUPS[gi];
-
-    // Player points summary row - sorted by score descending
-    var sortedPlayers=allPlayers.slice().map(function(pl2){return {p:pl2,score:calcScore(pl2.picks||{})};}).sort(function(a,b){return b.score-a.score;});
-    var summaryHtml='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:0.75rem;">';
-    for(var pi2=0;pi2<sortedPlayers.length;pi2++){
-      var pl2=sortedPlayers[pi2].p;
-      var sc2=sortedPlayers[pi2].score;
-      summaryHtml+='<div style="display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 4px;">';
-      summaryHtml+='<div class="sm-avatar" style="background:'+avatarColor(pl2.name)+';">' +initials(pl2.name)+'<div class="tip">'+pl2.name+'</div></div>';
-      summaryHtml+='<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:var(--purple);">'+sc2+'</span>';
-      summaryHtml+='<span style="font-size:10px;color:var(--text-dim);">pts</span>';
-      summaryHtml+='</div>';
-    }
-    summaryHtml+='</div>';
-
     html+='<div class="group-section-label">'+g.name+'</div>';
-    html+=summaryHtml;
 
     for(var si=0;si<g.schedule.length;si++){
       var m=g.schedule[si];
@@ -601,12 +601,12 @@ function renderSchedule(){
       var timeStr=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       html+='<div class="match-card">';
       html+='<div class="match-meta">'+dateStr+' &middot; '+timeStr+'</div>';
-      html+='<div class="match-teams-row">';
+      html+='<div class="match-teams-row" style="grid-template-columns:1fr auto 1fr;">';
       html+='<div class="team-home">'+flagImg(m.home)+'<span class="team-name-s">'+m.home+'</span></div>';
       var scoreData=matchScores[m.home+'|'+m.away];
-      if(finished&&scoreData){html+='<div class="score-s">'+scoreData.hs+' <span style="font-size:11px;color:var(--text-muted);font-family:Barlow,sans-serif;font-weight:500;">'+resultLabel+'</span> '+scoreData.as+'</div>';}
-      else if(finished){html+='<div class="score-s">'+resultLabel+'</div>';}
-      else{html+='<div class="score-s pending">vs</div>';}
+      if(finished&&scoreData){html+='<div class="score-col-s"><span class="score-num-s">'+scoreData.hs+'</span><span class="result-label-s">'+resultLabel+'</span><span class="score-num-s">'+scoreData.as+'</span></div>';}
+      else if(finished){html+='<div class="score-col-s"><span class="result-label-s">'+resultLabel+'</span></div>';}
+      else{html+='<div class="score-col-s"><span class="score-pending-s">vs</span></div>';}
       html+='<div class="team-away"><span class="team-name-s">'+m.away+'</span>'+flagImg(m.away)+'</div>';
       html+='</div>';
       html+='<div class="picks-grid">';
