@@ -543,12 +543,25 @@ function renderSchedule(){
   var html='';
   for(var gi=0;gi<GROUPS.length;gi++){
     var g=GROUPS[gi];
+
+    // Player points summary row
+    var summaryHtml='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:0.75rem;">';
+    for(var pi2=0;pi2<allPlayers.length;pi2++){
+      var pl2=allPlayers[pi2];
+      var sc2=calcScore(pl2.picks||{});
+      summaryHtml+='<div style="display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 4px;">';
+      summaryHtml+='<div class="sm-avatar" style="background:'+avatarColor(pl2.name)+';">' +initials(pl2.name)+'<div class="tip">'+pl2.name+'</div></div>';
+      summaryHtml+='<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:var(--purple);">'+sc2+'</span>';
+      summaryHtml+='<span style="font-size:10px;color:var(--text-dim);">pts</span>';
+      summaryHtml+='</div>';
+    }
+    summaryHtml+='</div>';
+
     html+='<div class="group-section-label">'+g.name+'</div>';
-    var curMd=0;
+    html+=summaryHtml;
 
     for(var si=0;si<g.schedule.length;si++){
       var m=g.schedule[si];
-      if(m.md!==curMd){curMd=m.md;html+='<div class="day-label">Matchday '+m.md+'</div>';}
 
       var result=getMatchResult(m.home,m.away);
       var finished=!!result;
