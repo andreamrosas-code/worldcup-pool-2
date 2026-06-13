@@ -29,7 +29,6 @@ header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1re
 .nav-tab{background:transparent;border:none;padding:6px 12px;border-radius:6px;color:var(--text-muted);font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
 .nav-tab:hover{background:var(--bg3);color:var(--text);}
 .nav-tab.active{background:var(--purple-dark);color:#fff;}
-.header-player{font-size:12px;color:var(--text-muted);white-space:nowrap;flex-shrink:0;}
 main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
 .screen{display:none;}.screen.active{display:block;}
 .btn-primary{width:100%;margin-top:14px;background:linear-gradient(90deg,var(--purple-dark),var(--pink));color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:opacity 0.15s;}
@@ -51,7 +50,6 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
 .lb-table tr:last-child td{border-bottom:none;}
 .lb-table tbody tr{cursor:pointer;}
 .lb-table tbody tr:hover td{background:var(--bg2);}
-.lb-table tbody tr.highlighted td{background:var(--bg3);border-left:3px solid var(--purple);}
 .rank-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text-dim);}
 .rank-num.top1{color:var(--gold);}.rank-num.top2{color:#9090b8;}.rank-num.top3{color:#d08040;}
 .pts-badge{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--purple);}
@@ -122,9 +120,7 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
     <button class="nav-tab active" onclick="showScreen('lb');setActiveTab(this)">Leaderboard</button>
     <button class="nav-tab" onclick="showScreen('schedule');setActiveTab(this);renderSchedule()">Schedule</button>
   </div>
-  <div class="header-player" id="header-player">
-    <button class="btn-ghost" style="font-size:12px;padding:5px 12px;" onclick="openPlayerSelect()">Who am I?</button>
-  </div>
+
 </header>
 
 <main>
@@ -335,7 +331,7 @@ var TEAM_ALIASES={
 };
 
 var PTS_FAV=1,PTS_DRAW=3,PTS_UPSET=5;
-var db=null,allPlayers=[],adminUnlocked=false,selectedPlayer=null;
+var db=null,allPlayers=[],adminUnlocked=false;
 var matchResults={},lastRefresh=null,refreshTimer=null;
 
 function isFav(team,teams){return teams.indexOf(team)<2;}
@@ -482,10 +478,10 @@ function renderLeaderboard(){
   for(var i=0;i<rows.length;i++){
     var p=rows[i];var done=Object.keys(p.picks).length;
     var rc=i===0?'top1':i===1?'top2':i===2?'top3':'';
-    var isMe=selectedPlayer&&p.name===selectedPlayer;
+    
     html+='<tr class="'+(isMe?'highlighted':'')+'" onclick="showPlayerDetail(\''+p.name.replace(/'/g,"\\'")+'\')">'+
       '<td><div class="rank-num '+rc+'">'+(i+1)+'</div></td>'+
-      '<td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar" style="background:'+avatarColor(p.name)+';">'+initials(p.name)+'</div><span style="font-weight:500;">'+p.name+(isMe?' <span style="font-size:11px;color:var(--purple);">(you)</span>':'')+'</span></div></td>';
+      '<td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar" style="background:'+avatarColor(p.name)+';">'+initials(p.name)+'</div><span style="font-weight:500;">'+p.name+'</span></div></td>';
     if(showPts){
       var bp=calcBestPossible(p.picks);
       html+='<td style="text-align:right;"><span class="pts-badge">'+p.score+'</span> <span style="font-size:12px;color:var(--text-muted);">pts</span>'+
@@ -617,28 +613,6 @@ function renderSchedule(){
   document.getElementById('schedule-content').innerHTML=html;
 }
 
-function renderPlayerSelectList(){
-  var list=document.getElementById('player-select-list');
-  if(allPlayers.length===0){list.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:1rem;">No players yet.</div>';return;}
-  var html='';
-  for(var i=0;i<allPlayers.length;i++){
-    var p=allPlayers[i];
-    html+='<div class="player-select-btn" onclick="selectPlayer(\''+p.name.replace(/'/g,"\\'")+'\')">'+
-      '<div class="avatar" style="background:'+avatarColor(p.name)+';width:36px;height:36px;font-size:13px;">'+initials(p.name)+'</div>'+
-      '<span>'+p.name+'</span></div>';
-  }
-  list.innerHTML=html;
-}
-
-function selectPlayer(name){
-  selectedPlayer=name;
-  document.getElementById('header-player').innerHTML='<strong style="color:var(--lilac);">'+name+'</strong> <button class="btn-ghost" style="font-size:11px;padding:3px 8px;margin-left:4px;" onclick="openPlayerSelect()">Change</button>';
-  closeModal();renderLeaderboard();
-}
-
-function openPlayerSelect(){renderPlayerSelectList();document.getElementById('modal-overlay').style.display='flex';}
-function closeModal(){document.getElementById('modal-overlay').style.display='none';}
-function closeModalIfOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 
 function toggleAdmin(){var a=document.getElementById('admin-area');a.style.display=a.style.display==='none'?'block':'none';}
 
