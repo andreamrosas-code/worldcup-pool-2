@@ -544,11 +544,12 @@ function renderSchedule(){
   for(var gi=0;gi<GROUPS.length;gi++){
     var g=GROUPS[gi];
 
-    // Player points summary row
+    // Player points summary row - sorted by score descending
+    var sortedPlayers=allPlayers.slice().map(function(pl2){return {p:pl2,score:calcScore(pl2.picks||{})};}).sort(function(a,b){return b.score-a.score;});
     var summaryHtml='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:0.75rem;">';
-    for(var pi2=0;pi2<allPlayers.length;pi2++){
-      var pl2=allPlayers[pi2];
-      var sc2=calcScore(pl2.picks||{});
+    for(var pi2=0;pi2<sortedPlayers.length;pi2++){
+      var pl2=sortedPlayers[pi2].p;
+      var sc2=sortedPlayers[pi2].score;
       summaryHtml+='<div style="display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 4px;">';
       summaryHtml+='<div class="sm-avatar" style="background:'+avatarColor(pl2.name)+';">' +initials(pl2.name)+'<div class="tip">'+pl2.name+'</div></div>';
       summaryHtml+='<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:var(--purple);">'+sc2+'</span>';
