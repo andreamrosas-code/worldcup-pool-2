@@ -469,7 +469,7 @@ function renderLeaderboard(){
     var p=rows[i];var done=Object.keys(p.picks).length;
     var rc=i===0?'top1':i===1?'top2':i===2?'top3':'';
     
-    html+='<tr class="'+(isMe?'highlighted':'')+'" onclick="showPlayerDetail(\''+p.name.replace(/'/g,"\\'")+'\')">'+
+    html+='<tr onclick="showPlayerDetail(\''+p.name.replace(/'/g,"\\'")+'\')">'+
       '<td><div class="rank-num '+rc+'">'+(i+1)+'</div></td>'+
       '<td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar" style="background:'+avatarColor(p.name)+';">'+initials(p.name)+'</div><span style="font-weight:500;">'+p.name+'</span></div></td>';
     if(showPts){
