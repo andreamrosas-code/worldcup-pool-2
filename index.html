@@ -322,7 +322,7 @@ var TEAM_ALIASES={
 
 var PTS_FAV=1,PTS_DRAW=3,PTS_UPSET=5;
 var db=null,allPlayers=[],adminUnlocked=false;
-var matchResults={},lastRefresh=null,refreshTimer=null;
+var matchResults={},matchScores={},lastRefresh=null,refreshTimer=null;
 
 function isFav(team,teams){return teams.indexOf(team)<2;}
 function initials(n){return n.trim().split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'??';}
@@ -391,7 +391,7 @@ async function fetchResults(){
     var resp=await fetch('https://worldcup26.ir/get/games');
     if(!resp.ok)return;
     var data=await resp.json();
-    var nr={};
+    var nr={};var scores={};
     var games=Array.isArray(data)?data:(data.games||data.data||[]);
     games.forEach(function(m){
       var finished=m.finished==='TRUE'||m.finished===true||m.time_elapsed==='finished';
@@ -403,10 +403,12 @@ async function fetchResults(){
         if(home&&away){
           nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
           nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
+          scores[home+'|'+away]={hs:hs,as:as};
+          scores[away+'|'+home]={hs:as,as:hs};
         }
       }
     });
-    matchResults=nr;lastRefresh=new Date();
+    matchResults=nr;matchScores=scores;lastRefresh=new Date();
     console.log('Results loaded:',Object.keys(nr).length,'finished matches');
   }catch(e){console.log('Results fetch error:',e);}
 }
@@ -601,7 +603,9 @@ function renderSchedule(){
       html+='<div class="match-meta">'+dateStr+' &middot; '+timeStr+'</div>';
       html+='<div class="match-teams-row">';
       html+='<div class="team-home">'+flagImg(m.home)+'<span class="team-name-s">'+m.home+'</span></div>';
-      if(finished){html+='<div class="score-s">'+resultLabel+'</div>';}
+      var scoreData=matchScores[m.home+'|'+m.away];
+      if(finished&&scoreData){html+='<div class="score-s">'+scoreData.hs+' <span style="font-size:11px;color:var(--text-muted);font-family:Barlow,sans-serif;font-weight:500;">'+resultLabel+'</span> '+scoreData.as+'</div>';}
+      else if(finished){html+='<div class="score-s">'+resultLabel+'</div>';}
       else{html+='<div class="score-s pending">vs</div>';}
       html+='<div class="team-away"><span class="team-name-s">'+m.away+'</span>'+flagImg(m.away)+'</div>';
       html+='</div>';
