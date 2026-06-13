@@ -508,7 +508,7 @@ function showPlayerDetail(name){
     var curMd=0;
     for(var si=0;si<g.schedule.length;si++){
       var m=g.schedule[si];
-      if(m.md!==curMd){curMd=m.md;html+='<div class="matchday-label">Matchday '+m.md+'</div>';}
+      curMd=m.md;
       var key=g.name+'-'+m.ki;
       var pick=picks[key]||null;
       var result=getMatchResult(m.home,m.away);
@@ -598,7 +598,7 @@ function renderSchedule(){
       var dateStr=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
       var timeStr=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       html+='<div class="match-card">';
-      html+='<div class="match-meta">Matchday '+m.md+' &middot; '+dateStr+' &middot; '+timeStr+'</div>';
+      html+='<div class="match-meta">'+dateStr+' &middot; '+timeStr+'</div>';
       html+='<div class="match-teams-row">';
       html+='<div class="team-home">'+flagImg(m.home)+'<span class="team-name-s">'+m.home+'</span></div>';
       if(finished){html+='<div class="score-s">'+resultLabel+'</div>';}
