@@ -430,7 +430,6 @@ async function startApp(){
   await loadPlayers();
   await fetchResults();
   renderLeaderboard();
-  renderPlayerSelectList();
   clearInterval(refreshTimer);
   refreshTimer=setInterval(async function(){
     await loadPlayers();await fetchResults();renderLeaderboard();
