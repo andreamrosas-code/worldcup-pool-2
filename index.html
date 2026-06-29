@@ -313,13 +313,16 @@ function flagImg(team){
 }
 
 var TEAM_ALIASES={
-  'Korea Republic':'South Korea','Republic of Korea':'South Korea',
-  'Bosnia-Herzegovina':'Bosnia and Herzegovina','Bosnia & Herzegovina':'Bosnia and Herzegovina','Bosnia':'Bosnia and Herzegovina',
+  'Korea Republic':'South Korea','Republic of Korea':'South Korea','Korea, Republic of':'South Korea',
+  'Bosnia-Herzegovina':'Bosnia and Herzegovina','Bosnia & Herzegovina':'Bosnia and Herzegovina','Bosnia':'Bosnia and Herzegovina','Bosnia & Herz.':'Bosnia and Herzegovina','Bosnia-Herz.':'Bosnia and Herzegovina',
   'Turkiye':'Turkiye','Turkey':'Turkiye','Türkiye':'Turkiye',
-  'United States':'USA',
-  'DR Congo':'DR Congo','Congo DR':'DR Congo','Democratic Republic of Congo':'DR Congo','Congo':'DR Congo',
-  'Cote d\'Ivoire':'Ivory Coast','Cote d Ivoire':'Ivory Coast','Ivory Coast':'Ivory Coast',
-  'Cape Verde Islands':'Cape Verde','Curaçao':'Curacao','Czech Republic':'Czechia'
+  'United States':'USA','United States of America':'USA','USMNT':'USA',
+  'DR Congo':'DR Congo','Congo DR':'DR Congo','Democratic Republic of Congo':'DR Congo','Congo':'DR Congo','DR. Congo':'DR Congo','Congo (DR)':'DR Congo',
+  'Cote d\'Ivoire':'Ivory Coast','Cote d Ivoire':'Ivory Coast','Ivory Coast':'Ivory Coast','Côte d\'Ivoire':'Ivory Coast',
+  'Cape Verde Islands':'Cape Verde','Cabo Verde':'Cape Verde',
+  'Curaçao':'Curacao',
+  'Czech Republic':'Czechia','Czech Rep.':'Czechia',
+  'Korea DPR':'North Korea'
 };
 
 var PTS_FAV=1,PTS_DRAW=3,PTS_UPSET=5;
@@ -390,28 +393,37 @@ function calcBestPossible(picks){
 
 async function fetchResults(){
   try{
-    var resp=await fetch('https://worldcup26.ir/get/games');
+    var resp=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=200');
     if(!resp.ok)return;
     var data=await resp.json();
     var nr={};var scores={};
-    var games=Array.isArray(data)?data:(data.games||data.data||[]);
-    games.forEach(function(m){
-      var finished=m.finished==='TRUE'||m.finished===true||m.time_elapsed==='finished';
-      if(finished){
-        var home=normaliseTeam(m.home_team_name_en||m.home_team||'');
-        var away=normaliseTeam(m.away_team_name_en||m.away_team||'');
-        var hs=parseInt(m.home_score||0);
-        var as=parseInt(m.away_score||0);
-        if(home&&away){
-          nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
-          nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
-          scores[home+'|'+away]={hs:hs,as:as};
-          scores[away+'|'+home]={hs:as,as:hs};
-        }
+    var events=data.events||[];
+    events.forEach(function(ev){
+      var comp=(ev.competitions&&ev.competitions[0])?ev.competitions[0]:null;
+      if(!comp)return;
+      var st=comp.status&&comp.status.type?comp.status.type:{};
+      var finished=st.completed===true||st.state==='post';
+      if(!finished)return;
+      var competitors=comp.competitors||[];
+      var homeC=null,awayC=null;
+      competitors.forEach(function(c){
+        if(c.homeAway==='home')homeC=c;
+        else if(c.homeAway==='away')awayC=c;
+      });
+      if(!homeC||!awayC)return;
+      var home=normaliseTeam(((homeC.team&&(homeC.team.name||homeC.team.displayName))||'').trim());
+      var away=normaliseTeam(((awayC.team&&(awayC.team.name||awayC.team.displayName))||'').trim());
+      var hs=parseInt(homeC.score);
+      var as=parseInt(awayC.score);
+      if(home&&away&&!isNaN(hs)&&!isNaN(as)){
+        nr[home+'|'+away]=getResultOutcome(home,away,hs,as);
+        nr[away+'|'+home]=getResultOutcome(home,away,hs,as);
+        scores[home+'|'+away]={hs:hs,as:as};
+        scores[away+'|'+home]={hs:as,as:hs};
       }
     });
     matchResults=nr;matchScores=scores;lastRefresh=new Date();
-    console.log('Results loaded:',Object.keys(nr).length,'finished matches');
+    console.log('Results loaded:',events.length,'events,',Object.keys(scores).length/2,'finished matches');
   }catch(e){console.log('Results fetch error:',e);}
 }
 
